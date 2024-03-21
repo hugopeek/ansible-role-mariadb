@@ -29,5 +29,5 @@
 - name: Install packages
   package:
     name: "{{ mariadb_packages }}"
-    state: "{{ 'latest' if ansible_distribution == 'Debian' else 'installed' }}"
+    state: "{{ 'latest' if ansible_os_family == 'Debian' else 'installed' }}"
   tags: mariadb
