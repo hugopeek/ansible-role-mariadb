@@ -9,7 +9,6 @@
   when: ansible_os_family != 'Debian'
   tags: mariadb
 
-
 - name: Install gpg to add repokey (apt)
   package:
     name: gpg
@@ -17,23 +16,13 @@
   when: ansible_os_family == 'Debian'
   tags: mariadb
 
-- name: Add official MariaDB repository key (apt)
-  apt_key:
-    url: https://mariadb.org/mariadb_release_signing_key.asc
-    state: present
-  when: ansible_os_family == 'Debian'
-  tags: mariadb
-
 - name: Add official MariaDB repository (apt)
-  template:
-    src: etc_apt_sources.list.d_mariadb.list.j2
-    dest: /etc/apt/sources.list.d/mariadb.list
-    mode: '0644'
-  when: ansible_os_family == 'Debian'
-  tags: mariadb
-
-- name: Update packages cache with new repo (apt)
-  apt:
-    update_cache: true
+  deb822_repository:
+    name: mariadb
+    types: deb
+    uris: "https://{{ mariadb_mirror }}/{{ mariadb_version }}/{{ ansible_distribution|lower }}"
+    suites: "{{ ansible_facts['distribution_release'] }}"
+    components: main
+    signed_by: https://mariadb.org/mariadb_release_signing_key.pgp
   when: ansible_os_family == 'Debian'
   tags: mariadb
